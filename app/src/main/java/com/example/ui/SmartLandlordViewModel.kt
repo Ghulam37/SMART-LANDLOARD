@@ -135,6 +135,22 @@ class SmartLandlordViewModel(application: Application) : AndroidViewModel(applic
         }
     }
 
+    fun loginWithFacebookSimulation(email: String, name: String) {
+        viewModelScope.launch {
+            _loginError.value = null
+            val cleanEmail = email.lowercase().trim()
+            var user = repository.getUserByEmail(cleanEmail)
+            if (user == null) {
+                // Register instantly via facebook sign-in with default Free plan
+                repository.registerUser(name, cleanEmail, "facebook_oauth_simulated", googleSignedIn = false)
+                user = repository.getUserByEmail(cleanEmail)
+            }
+            _currentUser.value = user
+            repository.logActivity(cleanEmail, "Logged in via Facebook Authentication")
+            _currentRoute.value = "dashboard"
+        }
+    }
+
     fun register(name: String, email: String, passwordText: String) {
         viewModelScope.launch {
             _registerError.value = null

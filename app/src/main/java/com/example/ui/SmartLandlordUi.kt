@@ -42,6 +42,7 @@ import com.example.ui.theme.*
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 // ---------------------------------------------------------------------
@@ -171,6 +172,9 @@ fun LoginScreen(viewModel: SmartLandlordViewModel) {
     val loginError by viewModel.loginError.collectAsStateWithLifecycle()
     val resetMessage by viewModel.resetMessage.collectAsStateWithLifecycle()
     val context = LocalContext.current
+    
+    var showGoogleDialog by remember { mutableStateOf(false) }
+    var showFacebookDialog by remember { mutableStateOf(false) }
 
     Box(
         modifier = Modifier
@@ -328,6 +332,53 @@ fun LoginScreen(viewModel: SmartLandlordViewModel) {
 
                     Spacer(modifier = Modifier.height(16.dp))
 
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(10.dp)
+                    ) {
+                        // Google Sign-In Button
+                        OutlinedButton(
+                            onClick = { showGoogleDialog = true },
+                            border = BorderStroke(1.dp, Color.White.copy(alpha = 0.3f)),
+                            colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.White),
+                            shape = RoundedCornerShape(8.dp),
+                            modifier = Modifier
+                                .weight(1f)
+                                .height(48.dp)
+                        ) {
+                            Image(
+                                painter = painterResource(id = com.example.R.drawable.ic_google_logo),
+                                contentDescription = "Google Logo",
+                                modifier = Modifier.size(20.dp)
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text("Google", fontSize = 14.sp, fontWeight = FontWeight.SemiBold)
+                        }
+
+                        // Facebook Sign-In Button
+                        Button(
+                            onClick = { showFacebookDialog = true },
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color(0xFF1877F2),
+                                contentColor = Color.White
+                            ),
+                            shape = RoundedCornerShape(8.dp),
+                            modifier = Modifier
+                                .weight(1f)
+                                .height(48.dp)
+                        ) {
+                            Image(
+                                painter = painterResource(id = com.example.R.drawable.ic_facebook_logo),
+                                contentDescription = "Facebook Logo",
+                                modifier = Modifier.size(20.dp)
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text("Facebook", fontSize = 14.sp, fontWeight = FontWeight.SemiBold)
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(12.dp))
+
                     OutlinedButton(
                         onClick = {
                             viewModel.loginWithGoogleSimulation(
@@ -335,14 +386,14 @@ fun LoginScreen(viewModel: SmartLandlordViewModel) {
                                 "Ghulam Moheuddin"
                             )
                         },
-                        colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.White),
-                        border = BorderStroke(1.dp, Color.White.copy(alpha = 0.3f)),
+                        colors = ButtonDefaults.outlinedButtonColors(contentColor = SaGold),
+                        border = BorderStroke(1.dp, SaGold.copy(alpha = 0.4f)),
                         shape = RoundedCornerShape(8.dp),
-                        modifier = Modifier.fillMaxWidth().height(48.dp)
+                        modifier = Modifier.fillMaxWidth().height(42.dp)
                     ) {
-                        Icon(Icons.Default.SupervisorAccount, contentDescription = "Google Logo", tint = SaGold, modifier = Modifier.size(20.dp))
+                        Icon(Icons.Default.SupervisorAccount, contentDescription = "Developer Account", tint = SaGold, modifier = Modifier.size(18.dp))
                         Spacer(modifier = Modifier.width(8.dp))
-                        Text("Sign In as Developer (mghulam2006@gmail.com)")
+                        Text("Instant Developer Sign-In (mghulam2006@gmail.com)", fontSize = 11.sp, fontWeight = FontWeight.Medium)
                     }
 
                     Spacer(modifier = Modifier.height(14.dp))
@@ -406,6 +457,499 @@ fun LoginScreen(viewModel: SmartLandlordViewModel) {
                     )
                 }
             }
+            // --- GOOGLE SIGN IN DIALOG SIMULATION ---
+            if (showGoogleDialog) {
+                var customEmail by remember { mutableStateOf("") }
+                var customName by remember { mutableStateOf("") }
+                var isConnecting by remember { mutableStateOf(false) }
+                var isAddNew by remember { mutableStateOf(false) }
+                var errorMessage by remember { mutableStateOf("") }
+
+                Dialog(onDismissRequest = { if (!isConnecting) showGoogleDialog = false }) {
+                    Card(
+                        shape = RoundedCornerShape(24.dp),
+                        colors = CardDefaults.cardColors(containerColor = Color(0xFFF1F5F9)),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        border = BorderStroke(1.dp, Color.LightGray)
+                    ) {
+                        Column(
+                            modifier = Modifier.padding(24.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Image(
+                                painter = painterResource(id = com.example.R.drawable.ic_google_logo),
+                                contentDescription = "Google Logo",
+                                modifier = Modifier.size(36.dp)
+                            )
+                            Spacer(modifier = Modifier.height(12.dp))
+                            Text(
+                                text = "Sign in with Google",
+                                color = Color.Black,
+                                fontSize = 18.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                            Text(
+                                text = "to continue to Smart Landlord",
+                                color = Color.Gray,
+                                fontSize = 12.sp,
+                                modifier = Modifier.padding(top = 4.dp, bottom = 16.dp)
+                            )
+
+                            HorizontalDivider(color = Color.LightGray.copy(alpha = 0.5f))
+
+                            if (isConnecting) {
+                                Column(
+                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                    modifier = Modifier.padding(vertical = 32.dp)
+                                ) {
+                                    CircularProgressIndicator(color = Color(0xFF4285F4), modifier = Modifier.size(44.dp))
+                                    Spacer(modifier = Modifier.height(16.dp))
+                                    Text(
+                                        text = if (customEmail.isNotEmpty()) "Signing in as ${customEmail}..." else "Connecting to Google Account...",
+                                        color = Color.DarkGray,
+                                        fontSize = 13.sp,
+                                        fontWeight = FontWeight.Medium
+                                    )
+                                }
+                            } else if (!isAddNew) {
+                                Text(
+                                    text = "Choose an account",
+                                    color = Color.DarkGray,
+                                    fontSize = 13.sp,
+                                    fontWeight = FontWeight.SemiBold,
+                                    modifier = Modifier
+                                        .align(Alignment.Start)
+                                        .padding(vertical = 12.dp)
+                                )
+
+                                // GM Account
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .clip(RoundedCornerShape(12.dp))
+                                        .clickable {
+                                            isConnecting = true
+                                            customEmail = "mghulam2006@gmail.com"
+                                            val scope = kotlinx.coroutines.MainScope()
+                                            scope.launch {
+                                                delay(1500)
+                                                viewModel.loginWithGoogleSimulation("mghulam2006@gmail.com", "Ghulam Moheuddin")
+                                                showGoogleDialog = false
+                                            }
+                                        }
+                                        .padding(12.dp),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Surface(
+                                        shape = CircleShape,
+                                        color = Color(0xFF1E3A8A),
+                                        modifier = Modifier.size(40.dp)
+                                    ) {
+                                        Box(contentAlignment = Alignment.Center) {
+                                            Text("GM", color = Color.White, fontSize = 14.sp, fontWeight = FontWeight.Bold)
+                                        }
+                                    }
+                                    Spacer(modifier = Modifier.width(12.dp))
+                                    Column {
+                                        Text("Ghulam Moheuddin", color = Color.Black, fontSize = 15.sp, fontWeight = FontWeight.SemiBold)
+                                        Text("mghulam2006@gmail.com", color = Color.Gray, fontSize = 12.sp)
+                                    }
+                                }
+
+                                HorizontalDivider(color = Color.LightGray.copy(alpha = 0.3f))
+
+                                // DL Account
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .clip(RoundedCornerShape(12.dp))
+                                        .clickable {
+                                            isConnecting = true
+                                            customEmail = "demo.landlord@gmail.com"
+                                            val scope = kotlinx.coroutines.MainScope()
+                                            scope.launch {
+                                                delay(1500)
+                                                viewModel.loginWithGoogleSimulation("demo.landlord@gmail.com", "Demo Landlord")
+                                                showGoogleDialog = false
+                                            }
+                                        }
+                                        .padding(12.dp),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Surface(
+                                        shape = CircleShape,
+                                        color = Color(0xFF0F766E),
+                                        modifier = Modifier.size(40.dp)
+                                    ) {
+                                        Box(contentAlignment = Alignment.Center) {
+                                            Text("DL", color = Color.White, fontSize = 14.sp, fontWeight = FontWeight.Bold)
+                                        }
+                                    }
+                                    Spacer(modifier = Modifier.width(12.dp))
+                                    Column {
+                                        Text("Demo Landlord", color = Color.Black, fontSize = 15.sp, fontWeight = FontWeight.SemiBold)
+                                        Text("demo.landlord@gmail.com", color = Color.Gray, fontSize = 12.sp)
+                                    }
+                                }
+
+                                HorizontalDivider(color = Color.LightGray.copy(alpha = 0.3f))
+
+                                // Add New Account Clickable
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .clip(RoundedCornerShape(12.dp))
+                                        .clickable { isAddNew = true }
+                                        .padding(12.dp),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.Add,
+                                        contentDescription = "Add Account",
+                                        tint = Color(0xFF1A73E8),
+                                        modifier = Modifier.padding(8.dp)
+                                    )
+                                    Spacer(modifier = Modifier.width(12.dp))
+                                    Text("Use another Google account", color = Color(0xFF1A73E8), fontSize = 15.sp, fontWeight = FontWeight.SemiBold)
+                                }
+                            } else {
+                                Spacer(modifier = Modifier.height(12.dp))
+                                
+                                if (errorMessage.isNotEmpty()) {
+                                    Text(errorMessage, color = Color.Red, fontSize = 12.sp, modifier = Modifier.padding(bottom = 8.dp))
+                                }
+
+                                OutlinedTextField(
+                                    value = customName,
+                                    onValueChange = { customName = it },
+                                    label = { Text("Full Name", color = Color.DarkGray) },
+                                    singleLine = true,
+                                    colors = OutlinedTextFieldDefaults.colors(
+                                        focusedTextColor = Color.Black,
+                                        unfocusedTextColor = Color.Black,
+                                        focusedBorderColor = Color(0xFF1A73E8),
+                                        unfocusedBorderColor = Color.Gray
+                                    ),
+                                    modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
+                                )
+
+                                OutlinedTextField(
+                                    value = customEmail,
+                                    onValueChange = { customEmail = it },
+                                    label = { Text("Google Email Address", color = Color.DarkGray) },
+                                    singleLine = true,
+                                    colors = OutlinedTextFieldDefaults.colors(
+                                        focusedTextColor = Color.Black,
+                                        unfocusedTextColor = Color.Black,
+                                        focusedBorderColor = Color(0xFF1A73E8),
+                                        unfocusedBorderColor = Color.Gray
+                                    ),
+                                    modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)
+                                )
+
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.End
+                                ) {
+                                    TextButton(onClick = { isAddNew = false }) {
+                                        Text("Back", color = Color.Gray)
+                                    }
+                                    Spacer(modifier = Modifier.width(8.dp))
+                                    Button(
+                                        onClick = {
+                                            if (customName.isBlank() || customEmail.isBlank() || !customEmail.contains("@")) {
+                                                errorMessage = "Please enter a valid name and Google email address."
+                                            } else {
+                                                isConnecting = true
+                                                val scope = kotlinx.coroutines.MainScope()
+                                                scope.launch {
+                                                    delay(1500)
+                                                    viewModel.loginWithGoogleSimulation(customEmail.trim(), customName.trim())
+                                                    showGoogleDialog = false
+                                                }
+                                            }
+                                        },
+                                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1A73E8))
+                                    ) {
+                                        Text("Sign In")
+                                    }
+                                }
+                            }
+
+                            if (!isConnecting) {
+                                Spacer(modifier = Modifier.height(16.dp))
+                                TextButton(
+                                    onClick = { showGoogleDialog = false },
+                                    modifier = Modifier.align(Alignment.End)
+                                ) {
+                                    Text("Cancel", color = Color(0xFF1A73E8))
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            // --- FACEBOOK SIGN IN DIALOG SIMULATION ---
+            if (showFacebookDialog) {
+                var customEmail by remember { mutableStateOf("") }
+                var customName by remember { mutableStateOf("") }
+                var isConnecting by remember { mutableStateOf(false) }
+                var isAddNew by remember { mutableStateOf(false) }
+                var errorMessage by remember { mutableStateOf("") }
+
+                Dialog(onDismissRequest = { if (!isConnecting) showFacebookDialog = false }) {
+                    Card(
+                        shape = RoundedCornerShape(24.dp),
+                        colors = CardDefaults.cardColors(containerColor = Color.White),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        border = BorderStroke(1.dp, Color(0xFF1877F2).copy(alpha = 0.5f))
+                    ) {
+                        Column {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .background(Color(0xFF1877F2))
+                                    .padding(16.dp)
+                            ) {
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Image(
+                                        painter = painterResource(id = com.example.R.drawable.ic_facebook_logo),
+                                        contentDescription = "Facebook Logo",
+                                        modifier = Modifier
+                                            .size(24.dp)
+                                            .clip(CircleShape)
+                                    )
+                                    Spacer(modifier = Modifier.width(8.dp))
+                                    Text(
+                                        text = "Facebook OAuth Login",
+                                        color = Color.White,
+                                        fontSize = 16.sp,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                }
+                            }
+
+                            Column(
+                                modifier = Modifier.padding(24.dp),
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                Text(
+                                    text = "Smart Landlord",
+                                    color = Color.Black,
+                                    fontSize = 20.sp,
+                                    fontWeight = FontWeight.Bold
+                                )
+                                Text(
+                                    text = "is requesting access to your public profile & email.",
+                                    color = Color.Gray,
+                                    fontSize = 12.sp,
+                                    textAlign = TextAlign.Center,
+                                    modifier = Modifier.padding(top = 4.dp, bottom = 20.dp)
+                                )
+
+                                HorizontalDivider(color = Color.LightGray.copy(alpha = 0.5f))
+
+                                if (isConnecting) {
+                                    Column(
+                                        horizontalAlignment = Alignment.CenterHorizontally,
+                                        modifier = Modifier.padding(vertical = 32.dp)
+                                    ) {
+                                        CircularProgressIndicator(color = Color(0xFF1877F2), modifier = Modifier.size(44.dp))
+                                        Spacer(modifier = Modifier.height(16.dp))
+                                        Text(
+                                            text = if (customEmail.isNotEmpty()) "Signing in as ${customEmail}..." else "Authenticating with Facebook...",
+                                            color = Color.DarkGray,
+                                            fontSize = 13.sp,
+                                            fontWeight = FontWeight.Medium
+                                        )
+                                    }
+                                } else if (!isAddNew) {
+                                    Text(
+                                        text = "Login with simulated accounts:",
+                                        color = Color.DarkGray,
+                                        fontSize = 13.sp,
+                                        fontWeight = FontWeight.SemiBold,
+                                        modifier = Modifier
+                                            .align(Alignment.Start)
+                                            .padding(vertical = 12.dp)
+                                    )
+
+                                    // GM Facebook Connected Account
+                                    Row(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .clip(RoundedCornerShape(12.dp))
+                                            .clickable {
+                                                isConnecting = true
+                                                customEmail = "mghulam2006@gmail.com"
+                                                val scope = kotlinx.coroutines.MainScope()
+                                                scope.launch {
+                                                    delay(1500)
+                                                    viewModel.loginWithFacebookSimulation("mghulam2006@gmail.com", "Ghulam Moheuddin")
+                                                    showFacebookDialog = false
+                                                }
+                                            }
+                                            .padding(12.dp),
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Surface(
+                                            shape = CircleShape,
+                                            color = Color(0xFF1A5276),
+                                            modifier = Modifier.size(40.dp)
+                                        ) {
+                                            Box(contentAlignment = Alignment.Center) {
+                                                Text("GM", color = Color.White, fontSize = 14.sp, fontWeight = FontWeight.Bold)
+                                            }
+                                        }
+                                        Spacer(modifier = Modifier.width(12.dp))
+                                        Column {
+                                            Text("Ghulam Moheuddin", color = Color.Black, fontSize = 15.sp, fontWeight = FontWeight.SemiBold)
+                                            Text("mghulam2006@gmail.com (FB Associated)", color = Color.Gray, fontSize = 12.sp)
+                                        }
+                                    }
+
+                                    HorizontalDivider(color = Color.LightGray.copy(alpha = 0.3f))
+
+                                    // JS Facebook Connected Account
+                                    Row(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .clip(RoundedCornerShape(12.dp))
+                                            .clickable {
+                                                isConnecting = true
+                                                customEmail = "jane.smith@gmail.com"
+                                                val scope = kotlinx.coroutines.MainScope()
+                                                scope.launch {
+                                                    delay(1500)
+                                                    viewModel.loginWithFacebookSimulation("jane.smith@gmail.com", "Jane Smith")
+                                                    showFacebookDialog = false
+                                                }
+                                            }
+                                            .padding(12.dp),
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Surface(
+                                            shape = CircleShape,
+                                            color = Color(0xFFC0392B),
+                                            modifier = Modifier.size(40.dp)
+                                        ) {
+                                            Box(contentAlignment = Alignment.Center) {
+                                                Text("JS", color = Color.White, fontSize = 14.sp, fontWeight = FontWeight.Bold)
+                                            }
+                                        }
+                                        Spacer(modifier = Modifier.width(12.dp))
+                                        Column {
+                                            Text("Jane Smith", color = Color.Black, fontSize = 15.sp, fontWeight = FontWeight.SemiBold)
+                                            Text("jane.smith@gmail.com (FB Associated)", color = Color.Gray, fontSize = 12.sp)
+                                        }
+                                    }
+
+                                    HorizontalDivider(color = Color.LightGray.copy(alpha = 0.3f))
+
+                                    // Add Another Facebook Account Clickable
+                                    Row(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .clip(RoundedCornerShape(12.dp))
+                                            .clickable { isAddNew = true }
+                                            .padding(12.dp),
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Default.Add,
+                                            contentDescription = "Add Account",
+                                            tint = Color(0xFF1877F2),
+                                            modifier = Modifier.padding(8.dp)
+                                        )
+                                        Spacer(modifier = Modifier.width(12.dp))
+                                        Text("Sign in with another Facebook profile", color = Color(0xFF1877F2), fontSize = 15.sp, fontWeight = FontWeight.SemiBold)
+                                    }
+                                } else {
+                                    Spacer(modifier = Modifier.height(12.dp))
+                                    
+                                    if (errorMessage.isNotEmpty()) {
+                                        Text(errorMessage, color = Color.Red, fontSize = 12.sp, modifier = Modifier.padding(bottom = 8.dp))
+                                    }
+
+                                    OutlinedTextField(
+                                        value = customName,
+                                        onValueChange = { customName = it },
+                                        label = { Text("Profile Name", color = Color.DarkGray) },
+                                        singleLine = true,
+                                        colors = OutlinedTextFieldDefaults.colors(
+                                            focusedTextColor = Color.Black,
+                                            unfocusedTextColor = Color.Black,
+                                            focusedBorderColor = Color(0xFF1877F2),
+                                            unfocusedBorderColor = Color.Gray
+                                        ),
+                                        modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
+                                    )
+
+                                    OutlinedTextField(
+                                        value = customEmail,
+                                        onValueChange = { customEmail = it },
+                                        label = { Text("Facebook Email Address", color = Color.DarkGray) },
+                                        singleLine = true,
+                                        colors = OutlinedTextFieldDefaults.colors(
+                                            focusedTextColor = Color.Black,
+                                            unfocusedTextColor = Color.Black,
+                                            focusedBorderColor = Color(0xFF1877F2),
+                                            unfocusedBorderColor = Color.Gray
+                                        ),
+                                        modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)
+                                    )
+
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        horizontalArrangement = Arrangement.End
+                                    ) {
+                                        TextButton(onClick = { isAddNew = false }) {
+                                            Text("Back", color = Color.Gray)
+                                        }
+                                        Spacer(modifier = Modifier.width(8.dp))
+                                        Button(
+                                            onClick = {
+                                                if (customName.isBlank() || customEmail.isBlank() || !customEmail.contains("@")) {
+                                                    errorMessage = "Please enter a valid name and Facebook email address."
+                                                } else {
+                                                    isConnecting = true
+                                                    val scope = kotlinx.coroutines.MainScope()
+                                                    scope.launch {
+                                                        delay(1500)
+                                                        viewModel.loginWithFacebookSimulation(customEmail.trim(), customName.trim())
+                                                        showFacebookDialog = false
+                                                    }
+                                                }
+                                            },
+                                            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF1877F2))
+                                        ) {
+                                            Text("Authenticate")
+                                        }
+                                    }
+                                }
+
+                                if (!isConnecting) {
+                                    Spacer(modifier = Modifier.height(16.dp))
+                                    TextButton(
+                                        onClick = { showFacebookDialog = false },
+                                        modifier = Modifier.align(Alignment.End)
+                                    ) {
+                                        Text("Cancel", color = Color(0xFF1877F2))
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
             Spacer(modifier = Modifier.height(20.dp))
         }
     }

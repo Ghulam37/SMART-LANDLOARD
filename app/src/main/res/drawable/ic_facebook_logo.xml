@@ -1,0 +1,14 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <!-- Circle Blue background of Facebook -->
+    <path
+        android:fillColor="#1877F2"
+        android:pathData="M12,0C5.37,0 0,5.37 0,12s5.37,12 12,12 12,-5.37 12,-12S18.63,0 12,0Z" />
+    <!-- White Letter 'f' -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M15,12H13V19H10V12H8.5V9.5H10V7.83C10,6.07 11.23,4.5 13.5,4.5H15.5V7H14.17C13.4,7 13,7.4 13,8.08V9.5H15.5L15,12Z" />
+</vector>
