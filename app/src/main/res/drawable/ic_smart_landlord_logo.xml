@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="120dp"
+    android:height="120dp"
+    android:viewportWidth="120"
+    android:viewportHeight="120">
+
+    <!-- Deep Blue Background Squircle -->
+    <path
+        android:fillColor="#2463B7"
+        android:pathData="M30,10 H90 A20,20 0 0 1 110,30 V90 A20,20 0 0 1 90,110 H30 A20,20 0 0 1 10,90 V30 A20,20 0 0 1 30,10 Z" />
+
+    <!-- Whitespace Baseline at Y = 84 -->
+    <path
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="3.5"
+        android:strokeLineCap="round"
+        android:pathData="M24,84 L80,84" />
+
+    <!-- Left Building Outline -->
+    <path
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="3.2"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M32,84 V56 L47,48 V84" />
+
+    <!-- Middle Building Outline -->
+    <path
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="3.2"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M47,84 V41 L68,30 V84" />
+
+    <!-- Right Building Outline -->
+    <path
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="3.2"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M68,84 V46 L86,55 V66" />
+
+    <!-- Upward Gold Arrow -->
+    <path
+        android:fillColor="#EDC01A"
+        android:pathData="M52.5,53 L62.5,53 L57.5,44 Z" />
+    <path
+        android:strokeColor="#EDC01A"
+        android:strokeWidth="4"
+        android:strokeLineCap="round"
+        android:pathData="M57.5,53 L57.5,72" />
+
+    <!-- House Key in Bottom Right Corner -->
+    <!-- Outer concentric ring -->
+    <path
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="3"
+        android:pathData="M 86, 75 m -6.5, 0 a 6.5,6.5 0 1,1 13,0 a 6.5,6.5 0 1,1 -13,0" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M 86, 75 m -2, 0 a 2,2 0 1,0 4,0 a 2,2 0 1,0 -4,0" />
+    <!-- Shaft extending down-left -->
+    <path
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="3"
+        android:strokeLineCap="round"
+        android:pathData="M81.4,79.6 L70,91" />
+    <!-- Teeth pointing down-right -->
+    <path
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="3"
+        android:strokeLineCap="round"
+        android:pathData="M78,83 L81,86" />
+    <path
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="3"
+        android:strokeLineCap="round"
+        android:pathData="M75,86 L78,89" />
+
+</vector>

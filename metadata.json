@@ -1,0 +1,6 @@
+{
+  "name": "Smart Landlord",
+  "description": "Manage Properties. Track Rent. Grow Smarter. SaaS for South African landlords.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
