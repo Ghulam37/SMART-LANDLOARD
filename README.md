@@ -1,21 +1,36 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://ai.google.dev/static/site-assets/images/share-ais-513315318.png" />
-</div>
+# Smart Landlord SaaS
+### Developed by Ghulam Tech Info
 
-# Run and deploy your AI Studio app
+[![Live Demo](https://img.shields.io/badge/Live_Demo-Smart_Landlord_SaaS-brightgreen?style=for-the-badge&logo=github)](https://ghulam37.github.io/SMART-LANDLOARD/)
 
-This contains everything you need to run your app locally.
+An automated property management platform designed to streamline tenant intake, lease tracking, and maintenance operations for landlords and property management agencies.
 
-View your app in AI Studio: https://ai.studio/apps/3aff6672-bb1b-4eeb-8fc8-6d9f7d8fc550
+---
 
-## Run Locally
+### 🚀 Live Application
+* **Live Demo Web App:** [Launch Smart Landlord SaaS](https://ghulam37.github.io/SMART-LANDLOARD/)
+* **Official Website:** [Ghulam Tech Info](https://ghulamtechinfo.tech/)
+* **Contact Email:** mghulam2006@gmail.com
 
-**Prerequisites:**  [Android Studio](https://developer.android.com/studio)
+---
 
+## Key Features
 
-1. Open Android Studio
-2. Select **Open** and choose the directory containing this project
-3. Allow Android Studio to fix any incompatibilities as it imports the project.
-4. Create a file named `.env` in the project directory and set `GEMINI_API_KEY` in that file to your Gemini API key (see `.env.example` for an example)
-5. Remove this line from the app's `build.gradle.kts` file: `signingConfig = signingConfigs.getByName("debugConfig")`
-6. Run the app on an emulator or physical device
+* **Automated Tenant Intake:** Digital onboarding forms for new lease applicants.
+* **Maintenance Tracking:** Centralized ticket logging for repairs and unit upkeep.
+* **Lease & Rent Reminders:** Notifications for expiring contracts and upcoming payments.
+* **Landlord Dashboard:** Real-time visibility into active units, revenue, and pending requests.
+
+---
+
+## Project Structure
+
+This web application runs as an HTML/JS platform hosted via GitHub Pages. No local installation or complex build environment is required to test the front-end interface.
+
+1. Open the [Live Demo Link](https://ghulam37.github.io/SMART-LANDLOARD/).
+2. Navigate the dashboard features using the top menu.
+3. Access sample tenant and property records directly in the web app.
+
+---
+
+© 2026 Ghulam Tech Info. All rights reserved.
